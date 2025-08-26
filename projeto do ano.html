@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>EcoTech – Zona Sul SP</title>
+
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+  <style>
+    /* (Seu CSS aqui, igual ao anterior...) */
+    :root{--bg:#E9FFF3;--bg-card:#FFFFFF;--brand:#0E3B2E;--brand-2:#1E5A47;--muted:#6b8a7e;--text:#13221c;--shadow:0 6px 20px rgba(0,0,0,.08);--radius:16px}
+    @media (prefers-color-scheme: dark){:root{--bg:#0f1814;--bg-card:#182821;--brand:#5dd09c;--brand-2:#3ecf7c;--muted:#b4d2c4;--text:#e8f5ef;--shadow:0 6px 16px rgba(0,0,0,.5)}body{background:linear-gradient(180deg,#0f1814 0%,#1b2b23 60%)}}*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto;color:var(--text);background:linear-gradient(180deg,#f4fff9 0%,var(--bg) 60%)}header{position:sticky;top:0;z-index:1000;background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#E9FFF3;padding:14px 18px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow)}header .logo{width:42px;height:42px;border-radius:10px;background:#e9fff3;color:var(--brand);display:grid;place-items:center;font-weight:800;font-size:22px}header h1{font-size:18px;margin:0}header small{display:block;font-size:12px;opacity:.9}.tabs{display:flex;gap:8px;padding:10px;flex-wrap:wrap;justify-content:center}.tab-btn{border:none;padding:10px 14px;border-radius:999px;background:#fff;color:var(--brand);font-weight:700;cursor:pointer;box-shadow:var(--shadow);transition:.2s;display:flex;align-items:center;gap:6px}.tab-btn[aria-selected="true"]{background:var(--brand);color:#fff;transform:translateY(-1px)}main{padding:10px}section.panel{display:none}section.panel.active{display:block}#map{height:60vh;min-height:360px;width:100%;border-radius:var(--radius);box-shadow:var(--shadow)}.map-cta{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap}.btn{border:none;background:var(--brand);color:#fff;font-weight:800;padding:12px 14px;border-radius:12px;cursor:pointer;box-shadow:var(--shadow);text-decoration:none;display:inline-flex;align-items:center;gap:6px}.btn.secondary{background:#fff;color:var(--brand)}.search{flex:1 1 240px;display:flex;align-items:center;gap:8px;background:#fff;border-radius:12px;padding:10px 12px;box-shadow:var(--shadow)}.search input{border:none;outline:none;width:100%;font-size:16px;background:transparent}.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}.card{background:var(--bg-card);border-radius:14px;padding:14px;box-shadow:var(--shadow)}.card h3{margin:.2rem 0;color:var(--brand)}.meta{color:var(--muted);font-size:14px}.guide,.about{background:var(--bg-card);border-radius:16px;box-shadow:var(--shadow);padding:16px;line-height:1.55}.guide li{margin:.4rem 0}.links{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}footer{padding:20px;text-align:center;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">♻️</div>
+    <div><h1>EcoTech</h1><small>Descarte correto • Zona Sul SP</small></div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn" aria-selected="true" data-target="tab-mapa">🗺️ Mapa</button>
+    <button class="tab-btn" aria-selected="false" data-target="tab-locais">📋 Locais</button>
+    <button class="tab-btn" aria-selected="false" data-target="tab-guia">📚 Como descartar</button>
+    <button class="tab-btn" aria-selected="false" data-target="tab-green">♻️ Green Eletron</button>
+    <button class="tab-btn" aria-selected="false" data-target="tab-sobre">ℹ️ Sobre</button>
+  </nav>
+
+  <main>
+    <section id="tab-mapa" class="panel active">
+      <div id="map"></div>
+    </section>
+
+    <section id="tab-locais" class="panel">
+      <div class="search">🔎 <input id="q" type="search" placeholder="Pesquisar local…" /></div>
+      <div id="cards" class="cards"></div>
+    </section>
+
+    <section id="tab-guia" class="panel guide">
+      <h2>Como descartar corretamente</h2>
+      <ul>
+        <li>📱 Apague seus dados antes de descartar celulares/computadores.</li>
+        <li>🔋 Pilhas e baterias → coletores específicos.</li>
+        <li>🏞️ Pequenos volumes → leve a PEVs em parques.</li>
+        <li>🚛 Grandes volumes → agende coleta com entidades.</li>
+      </ul>
+    </section>
+
+    <section id="tab-green" class="panel about">
+      <h2>♻️ Green Eletron</h2>
+      <p>A <strong>Green Eletron</strong> é uma entidade gestora sem fins lucrativos criada pela ABINEE, responsável pelo sistema de logística reversa de eletroeletrônicos e pilhas no Brasil.</p>
+      <h3>📦 O que pode ser descartado:</h3>
+      <ul>
+        <li>Celulares, tablets, notebooks, cabos e acessórios;</li>
+        <li>Pilhas e baterias portáteis;</li>
+        <li>Eletroportáteis pequenos (ex.: secador, liquidificador, ferro).</li>
+      </ul>
+      <h3>🚛 Como funciona:</h3>
+      <p>Pontos de coleta estão distribuídos em shoppings, mercados e lojas parceiras. O material coletado é destinado a recicladores credenciados.</p>
+      <h3>🌎 Por que é importante?</h3>
+      <p>Evita contaminação ambiental, reduz emissão de gases e recupera matérias-primas.</p>
+      <div class="links">
+        <a class="btn" href="https://greeneletron.org.br/localizador" target="_blank">🔎 Localizar ponto de coleta</a>
+        <a class="btn secondary" href="https://abree.org.br/pontos-de-recebimento" target="_blank">📍 PEVs da ABREE</a>
+      </div>
+    </section>
+
+    <section id="tab-sobre" class="panel about">
+      <h2>ℹ️ Sobre</h2>
+      <p>O EcoTech facilita o descarte correto de lixo eletrônico na Zona Sul de São Paulo.</p>
+      <p><strong>Recursos:</strong> mapa interativo, lista com busca, guia e links oficiais.</p>
+      <footer>EcoTech • v1.2 com tema escuro automático</footer>
+    </section>
+  </main>
+
+  <script>
+  const LOCAIS = [
+    { nome: "Rodrigues Montemor, Cidade Domitila", endereco: "Av. Rodrigues Montemor, 565 – Cidade Domitila", lat: 0, lng: 0 },
+    { nome: "Anália Maria de Jesus, Jardim Itacolomi", endereco: "R. Anália Maria de Jesus, 131 – Jardim Itacolomi", lat: 0, lng: 0 },
+    { nome: "Rua Jupatis, Jabaquara", endereco: "Rua Jupatis, 11 – Jabaquara", lat: 0, lng: 0 },
+    { nome: "Rua Jupatis, Vila Mira", endereco: "Rua Jupatis, 140 – Vila Mira", lat: 0, lng: 0 },
+    { nome: "Av. Professor Alceu Maynard Araújo", endereco: "Av. Professor Alceu Maynard Araújo, 330 – Vila Cruzeiro", lat: -23.6360691, lng: -46.7135141 },
+    { nome: "R. Alberto I, Vila Vermelha", endereco: "R. Alberto I, 156 – Vila Vermelha", lat: 0, lng: 0 },
+    { nome: "Cidade Monções (Escritório)", endereco: "Barão Do Triunfo, 612 – Escritório 902 – Cidade Monções", lat: 0, lng: 0 },
+    { nome: "Av. Guarapiranga, Jardim Japão", endereco: "Av. Guarapiranga, 4800 – Jardim Japão", lat: 0, lng: 0 },
+    { nome: "Mirandópolis", endereco: "Av. Senador Casemiro da Rocha, 1220 – Mirandópolis", lat: 0, lng: 0 },
+    { nome: "Vila Guarani", endereco: "Rua Opixé, 93 – Vila Guarani", lat: 0, lng: 0 },
+    { nome: "Vila Mariana", endereco: "R. Afonso Celso, 147 – Vila Mariana", lat: 0, lng: 0 },
+    { nome: "Butantã", endereco: "Av. Corifeu de Azevedo Marques, 1003 – Butantã", lat: 0, lng: 0 },
+    { nome: "Parque Regina", endereco: "R. Nelson Brissac, 1235 – Parque Regina", lat: 0, lng: 0 },
+    { nome: "Taboão da Serra", endereco: "R. Zioudu Benedito Romanini, 25 – Jardim Três Marias, Taboão da Serra", lat: 0, lng: 0 },
+    { nome: "Vila Formosa", endereco: "R. Templários, 192 – Vila Formosa", lat: 0, lng: 0 }
+  ];
+
+  let map = L.map('map').setView([-23.61, -46.64], 12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(map);
+
+  const recycleIcon = L.icon({
+    iconUrl: "https://cdn-icons-png.flaticon.com/512/1045/1045903.png",
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -28]
+  });
+
+  LOCAIS.forEach(loc => {
+    const marker = L.marker([loc.lat, loc.lng], { icon: recycleIcon }).addTo(map);
+    marker.bindPopup(`<b>${loc.nome}</b><br>${loc.endereco}`);
+  });
+
+  const $cards = document.getElementById("cards");
+
+  function render(filtros) {
+    filtros = filtros || LOCAIS;
+    $cards.innerHTML = filtros.map(l => `
+      <article class="card">
+        <h3>📍 ${l.nome}</h3>
+        <div class="meta">${l.endereco}</div>
+      </article>
+    `).join('');
+  }
+
+  render();
+  document.getElementById("q").oninput = e => {
+    const termo = e.target.value.toLowerCase();
+    render(LOCAIS.filter(l =>
+      l.nome.toLowerCase().includes(termo) ||
+      l.endereco.toLowerCase().includes(termo)
+    ));
+  };
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.setAttribute('aria-selected', 'false'));
+      btn.setAttribute('aria-selected', 'true');
+      const target = btn.dataset.target;
+      document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === target));
+      if (target === "tab-mapa") setTimeout(() => map.invalidateSize(), 200);
+    };
+  });
+  </script>
+</body>
+</html>
